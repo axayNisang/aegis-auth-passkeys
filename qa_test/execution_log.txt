@@ -1,0 +1,36 @@
+[Aegis Auth] Running on port 8087
+--- Aegis Auth Passkeys Manual QA Live Test ---
+Test 1 Healthcheck:
+ HTTP/1.1 200 OK
+{"status":"UP","service":"aegis-auth-passkeys"}
+
+Test 2 Passkey Challenge Created:
+{
+  "challengeId": "ch_cdf0d2ec6793a34c",
+  "challengeBase64": "zqUbiyYgqq5lj_tc51DB7_XG3339KWRYauWmoeqVDkY",
+  "userId": "usr_alex_dev",
+  "expiresAt": 1795612357684
+}
+
+Test 3 Legitimate Passkey Verification:
+ HTTP/1.1 200 OK
+{"valid":true,"message":"FIDO2 Passkey authenticated successfully"}
+
+Test 4 Replay Attack Rejection:
+ HTTP/1.1 401 Unauthorized
+{"valid":false,"error":"Challenge invalid, expired, or already consumed (replay prevented)"}
+
+Test 5 Forged Challenge Rejection:
+ HTTP/1.1 401 Unauthorized
+{"valid":false,"error":"Challenge invalid, expired, or already consumed (replay prevented)"}
+
+Test 6 TOTP Secret & Code Generated:
+{'secret': 'd6accb364988598b2c328f216a43f85add7348dc', 'currentCode': '572318'}
+
+Test 7 Valid TOTP Verification:
+ HTTP/1.1 200 OK
+{"valid":true,"message":"TOTP 2FA verified successfully"}
+
+Test 8 Invalid TOTP Code Rejection:
+ HTTP/1.1 401 Unauthorized
+{"valid":false,"error":"Invalid TOTP authenticator code"}
