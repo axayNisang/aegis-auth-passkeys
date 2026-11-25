@@ -32,4 +32,13 @@ describe('Aegis Security & Passkeys Engine', () => {
     expect(totp.verifyCode(secret, validOtp, now)).toBe(true);
     expect(totp.verifyCode(secret, '000000', now)).toBe(false);
   });
+
+  test('rejects expired WebAuthn challenges past TTL window', () => {
+    const challenge = webAuthn.createRegistrationChallenge('usr_expired_test');
+    // Artificially expire challenge
+    (challenge as any).expiresAt = Date.now() - 10000;
+
+    const isValid = webAuthn.verifyChallenge(challenge.challengeId, challenge.challengeBase64);
+    expect(isValid).toBe(false);
+  });
 });
